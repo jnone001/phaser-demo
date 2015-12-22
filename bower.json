@@ -1,0 +1,23 @@
+{
+  "name": "jorgenonell.me",
+  "version": "0.0.0",
+  "authors": [
+    "Jorge Nonell <jnone001@fiu.edu>"
+  ],
+  "description": "game",
+  "main": "game.html",
+  "moduleType": [
+    "node"
+  ],
+  "license": "MIT",
+  "homepage": "phaser-demo",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+  }
+}

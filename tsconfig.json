@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "target": "ES5",
+        "out": "client/js/game.js",
+        "watch": true,
+        "sourceMap": true
+    },
+    "exclude": [
+        "node_modules",
+        "server",
+        "client/bower_components"
+    ]
+}
