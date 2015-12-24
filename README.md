@@ -1,7 +1,7 @@
 # phaser-demo
 Setup: 
-Install Node: https://nodejs.org/en/download/stable/
-after you clone the repo run this from command line:
+ 1. Install Node: https://nodejs.org/en/download/stable/
+ 2. After you clone the repo run this from command line:
 ```unix
 $cd phaser-demo
 $npm install
