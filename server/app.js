@@ -4,7 +4,8 @@ var path = require('path');
 
 var port = process.env.PORT || 5005;
 
-app.use(express.static(__dirname+ '/../client'));
+app.use(express.static(__dirname + '/../client'));
+app.use("/client/assets", express.static(__dirname + '/../client/assets'));
 
 app.get('/', function(request, response){
 	response.sendFile(path.resolve(__dirname + '/../client/game.html'));
