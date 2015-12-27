@@ -28,3 +28,7 @@ node_modules
 
 #bower dependencies#
 bower_components
+
+#visual studio user files#
+.vs
+.ntvs_analysis.dat
