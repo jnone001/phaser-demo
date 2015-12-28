@@ -1,6 +1,6 @@
-/// <reference path="bower_components/phaser/typescript/phaser.d.ts" />
+/// <reference path="../bower_components/phaser/typescript/phaser.d.ts" />
 
-class Game {
+class Platformer {
 
     constructor() {
         this.game = new Phaser.Game(800, 600, Phaser.AUTO, 'content', { preload: this.preload, create: this.create, update: this.update });
@@ -9,13 +9,17 @@ class Game {
     game: Phaser.Game;
     platforms: Phaser.Group;
     player: Phaser.Sprite;
+    stars: Phaser.Group;
+    score: number;
+    text: Phaser.Text;
+    timer: Phaser.Timer;
     cursors: Phaser.CursorKeys;
 
     preload() {
-        this.game.load.image('sky', 'client/assets/sky.png');
-        this.game.load.image('ground', 'client/assets/platform.png');
-        this.game.load.image('star', 'client/assets/star.png');
-        this.game.load.spritesheet('dude', 'client/assets/dude.png', 32, 48);
+        this.game.load.image('sky', '../client/plat/assets/sky.png');
+        this.game.load.image('ground', '../client/plat/assets/platform.png');
+        this.game.load.image('star', '../client/plat/assets/star.png');
+        this.game.load.spritesheet('dude', '../client/plat/assets/dude.png', 32, 48);
     }
 
     create() {
@@ -46,43 +50,73 @@ class Game {
         this.player.animations.add('left', [0, 1, 2, 3], 10, true);
         this.player.animations.add('right', [5, 6, 7, 8], 10, true);
 
+        this.stars = this.game.add.group();
+        this.stars.enableBody = true;
+        this.score = 0;
+        this.timer = this.game.time.create(false);
+
+
+        this.text = this.game.add.text(this.game.world.centerX, this.game.world.height - 20, "- Time: 15s Score: 0", {
+            font: "18px Arial",
+            fill: "#ff0044",
+            align: "center"
+        });
+
+        this.text.anchor.setTo(0.5, 0.5);
+
+        //anywhere from 15 - 25 stars
+        var numOfStars = Math.ceil((Math.random() * 10) + 15);
+        for (var i = 0; i < numOfStars; i++) {
+            //  Create a star inside of the 'stars' group
+            var star = this.stars.create(i * 35, 0, 'star');
+
+            //  Let gravity do its thing
+            star.body.gravity.y = 300;
+
+            //  This just gives each star a slightly random bounce value
+            star.body.bounce.y = 0.7 + Math.random() * 0.2;
+        }
+
         this.cursors = this.game.input.keyboard.createCursorKeys();
     }
 
     update() {
+        this.text.setText("Time: 0" +  " Score:" + this.score);
         this.game.physics.arcade.collide(this.player, this.platforms);
+        this.game.physics.arcade.collide(this.stars, this.platforms);
+        this.game.physics.arcade.overlap(this.player, this.stars, collectStar, null, this);
 
-        //  Reset the players velocity (movement)
         this.player.body.velocity.x = 0;
 
         if (this.cursors.left.isDown) {
-            //  Move to the left
             this.player.body.velocity.x = -150;
-
             this.player.animations.play('left');
         }
         else if (this.cursors.right.isDown) {
-            //  Move to the right
             this.player.body.velocity.x = 150;
-
             this.player.animations.play('right');
         }
         else {
-            //  Stand still
             this.player.animations.stop();
-
             this.player.frame = 4;
         }
 
-        //  Allow the player to jump if they are touching the ground.
         if (this.cursors.up.isDown && this.player.body.touching.down) {
             this.player.body.velocity.y = -350;
         }
     }
 }
 
+function collectStar(player, star){
+    
+    // Removes the star from the screen
+    star.kill();
+    this.score++;
+
+}
+
 window.onload = () => {
 
-    var game = new Game();
+    var game = new Platformer();
 
 };

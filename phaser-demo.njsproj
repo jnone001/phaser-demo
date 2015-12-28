@@ -20,12 +20,20 @@
   <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
   <ItemGroup>
     <Content Include="bower.json" />
+    <Content Include="client\plat\assets\baddie.png" />
+    <Content Include="client\plat\assets\diamond.png" />
+    <Content Include="client\plat\assets\dude.png" />
+    <Content Include="client\plat\assets\firstaid.png" />
+    <Content Include="client\plat\assets\platform.png" />
+    <Content Include="client\plat\assets\sky.png" />
+    <Content Include="client\plat\assets\star.png" />
+    <Content Include="client\index.html" />
+    <Content Include="client\top-down\top-down.html" />
     <Content Include="package.json" />
     <Content Include="README.md" />
-    <Content Include="client\game.html" />
-    <TypeScriptCompile Include="client\game.ts" />
+    <Content Include="client\plat\plat.html" />
+    <TypeScriptCompile Include="client\plat\plat.ts" />
     <Compile Include="server\app.js" />
-    <Content Include="client\assets\Phaser-Logo-Small.png" />
     <Content Include="client\bower_components\phaser\license.txt" />
     <Content Include="client\bower_components\phaser\phaser-logo-small.png" />
     <Content Include="client\bower_components\phaser\.bower.json" />
@@ -1319,10 +1327,12 @@
     <Compile Include="client\bower_components\phaser\tasks\options\replace.js" />
     <Compile Include="client\bower_components\phaser\tasks\options\uglify.js" />
     <Compile Include="client\bower_components\phaser\tasks\yuidoc-to-jsdoc\converter.js" />
+    <TypeScriptCompile Include="client\top-down\top-down.ts" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="client" />
-    <Folder Include="client\assets" />
+    <Folder Include="client\top-down\" />
+    <Folder Include="client\plat\assets\" />
     <Folder Include="client\bower_components" />
     <Folder Include="client\bower_components\phaser" />
     <Folder Include="client\bower_components\phaser\build" />
@@ -1444,6 +1454,7 @@
     <Folder Include="client\bower_components\phaser\tasks\options" />
     <Folder Include="client\bower_components\phaser\tasks\yuidoc-to-jsdoc" />
     <Folder Include="client\bower_components\phaser\typescript" />
+    <Folder Include="client\plat\" />
     <Folder Include="server" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
