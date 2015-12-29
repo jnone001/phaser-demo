@@ -12,8 +12,8 @@ class Platformer {
     stars: Phaser.Group;
     score: number;
     text: Phaser.Text;
-    timer: Phaser.Timer;
     cursors: Phaser.CursorKeys;
+    state: any;
 
     preload() {
         this.game.load.image('sky', '../client/plat/assets/sky.png');
@@ -23,6 +23,7 @@ class Platformer {
     }
 
     create() {
+        this.state = {running: true};
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
         var sky = this.game.add.sprite(0, 0, 'sky');
@@ -53,16 +54,13 @@ class Platformer {
         this.stars = this.game.add.group();
         this.stars.enableBody = true;
         this.score = 0;
-        this.timer = this.game.time.create(false);
-
-
         this.text = this.game.add.text(this.game.world.centerX, this.game.world.height - 20, "- Time: 15s Score: 0", {
             font: "18px Arial",
             fill: "#ff0044",
             align: "center"
         });
-
         this.text.anchor.setTo(0.5, 0.5);
+        this.game.time.events.add(Phaser.Timer.SECOND * 15, endGame, this.game, this.state, this.text, this.score);
 
         //anywhere from 15 - 25 stars
         var numOfStars = Math.ceil((Math.random() * 10) + 15);
@@ -81,42 +79,59 @@ class Platformer {
     }
 
     update() {
-        this.text.setText("Time: 0" +  " Score:" + this.score);
-        this.game.physics.arcade.collide(this.player, this.platforms);
-        this.game.physics.arcade.collide(this.stars, this.platforms);
-        this.game.physics.arcade.overlap(this.player, this.stars, collectStar, null, this);
+        if (this.state.running) {
+            var timeLeft = this.game.time.events.duration / 1000;
+            this.text.setText("Time: " + timeLeft +  "s Score:" + this.score);
+            this.game.physics.arcade.collide(this.player, this.platforms);
+            this.game.physics.arcade.collide(this.stars, this.platforms);
+            this.game.physics.arcade.overlap(this.player, this.stars, collectStar, null, this);
 
-        this.player.body.velocity.x = 0;
+            this.player.body.velocity.x = 0;
 
-        if (this.cursors.left.isDown) {
-            this.player.body.velocity.x = -150;
-            this.player.animations.play('left');
-        }
-        else if (this.cursors.right.isDown) {
-            this.player.body.velocity.x = 150;
-            this.player.animations.play('right');
+            if (this.cursors.left.isDown) {
+                this.player.body.velocity.x = -150;
+                this.player.animations.play('left');
+            }
+            else if (this.cursors.right.isDown) {
+                this.player.body.velocity.x = 150;
+                this.player.animations.play('right');
+            }
+            else {
+                this.player.animations.stop();
+                this.player.frame = 4;
+            }
+
+            if (this.cursors.up.isDown && this.player.body.touching.down) {
+                this.player.body.velocity.y = -350;
+            }
         }
         else {
+            
+            this.game.physics.arcade.collide(this.player, this.platforms);
+            this.game.physics.arcade.collide(this.stars, this.platforms);
             this.player.animations.stop();
             this.player.frame = 4;
-        }
-
-        if (this.cursors.up.isDown && this.player.body.touching.down) {
-            this.player.body.velocity.y = -350;
         }
     }
 }
 
 function collectStar(player, star){
-    
-    // Removes the star from the screen
     star.kill();
     this.score++;
+}
 
+function endGame(state: any, text: Phaser.Text, score: number) {
+    state.running = false;
+    text.setText("Time: 0s Score:" + score);
 }
 
 window.onload = () => {
 
     var game = new Platformer();
 
+    var restartButton = document.getElementById("restart-button");
+    restartButton.addEventListener("click", function (event) {
+        document.body.removeChild(document.getElementsByTagName("canvas")[0]);
+        game = new Platformer();
+    });
 };
