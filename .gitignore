@@ -32,3 +32,4 @@ bower_components
 #visual studio user files#
 .vs
 .ntvs_analysis.dat
+*.suo

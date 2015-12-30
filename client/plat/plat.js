@@ -10,7 +10,6 @@ var Platformer = (function () {
         this.game.load.spritesheet('dude', '../client/plat/assets/dude.png', 32, 48);
     };
     Platformer.prototype.create = function () {
-        this.state = { running: true };
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
         var sky = this.game.add.sprite(0, 0, 'sky');
         this.platforms = this.game.add.group();
@@ -31,32 +30,33 @@ var Platformer = (function () {
         this.player.animations.add('right', [5, 6, 7, 8], 10, true);
         this.stars = this.game.add.group();
         this.stars.enableBody = true;
-        this.score = 0;
-        this.text = this.game.add.text(this.game.world.centerX, this.game.world.height - 20, "- Time: 15s Score: 0", {
+        var text = this.game.add.text(this.game.world.centerX, this.game.world.height - 20, "- Time: 15s Score: 0", {
             font: "18px Arial",
             fill: "#ff0044",
             align: "center"
         });
-        this.text.anchor.setTo(0.5, 0.5);
-        this.game.time.events.add(Phaser.Timer.SECOND * 15, endGame, this.game, this.state, this.text, this.score);
-        //anywhere from 15 - 25 stars
+        this.gameInfo = {
+            score: 0,
+            running: true,
+            text: text
+        };
+        this.gameInfo.text.anchor.setTo(0.5, 0.5);
+        this.game.time.events.add(Phaser.Timer.SECOND * 15, endGame, this.game, this.gameInfo);
         var numOfStars = Math.ceil((Math.random() * 10) + 15);
         for (var i = 0; i < numOfStars; i++) {
-            //  Create a star inside of the 'stars' group
             var star = this.stars.create(i * 35, 0, 'star');
-            //  Let gravity do its thing
-            star.body.gravity.y = 300;
-            //  This just gives each star a slightly random bounce value
+            //star.body.gravity.y = 300;
             star.body.bounce.y = 0.7 + Math.random() * 0.2;
         }
         this.cursors = this.game.input.keyboard.createCursorKeys();
     };
     Platformer.prototype.update = function () {
-        if (this.state.running) {
+        if (this.gameInfo.running) {
             var timeLeft = this.game.time.events.duration / 1000;
-            this.text.setText("Time: " + timeLeft + "s Score:" + this.score);
+            this.gameInfo.text.setText("Time: " + timeLeft + "s Score:" + this.gameInfo.score);
             this.game.physics.arcade.collide(this.player, this.platforms);
             this.game.physics.arcade.collide(this.stars, this.platforms);
+            this.game.physics.arcade.collide(this.stars, this.stars);
             this.game.physics.arcade.overlap(this.player, this.stars, collectStar, null, this);
             this.player.body.velocity.x = 0;
             if (this.cursors.left.isDown) {
@@ -76,6 +76,7 @@ var Platformer = (function () {
             }
         }
         else {
+            this.player.body.velocity.x = 0;
             this.game.physics.arcade.collide(this.player, this.platforms);
             this.game.physics.arcade.collide(this.stars, this.platforms);
             this.player.animations.stop();
@@ -86,11 +87,15 @@ var Platformer = (function () {
 })();
 function collectStar(player, star) {
     star.kill();
-    this.score++;
+    this.gameInfo.score++;
 }
-function endGame(state, text, score) {
-    state.running = false;
-    text.setText("Time: 0s Score:" + score);
+function endGame(gameInfo) {
+    gameInfo.running = false;
+    gameInfo.text.setText("Time: 0s Score:" + gameInfo.score);
+}
+//function to calculate if a given rectangular area collides with any other object already
+//in the game
+function isFreeSpace(startPoint, endPoint) {
 }
 window.onload = function () {
     var game = new Platformer();
